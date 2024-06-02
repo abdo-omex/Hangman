@@ -1,21 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:hangman/game_screen.dart'; // Importing the GameScreen widget
+import 'package:hangman/home_screen.dart';
+import 'package:hangman/const/game/categories_screen.dart';
+import 'package:hangman/game_screen.dart';
+import 'package:hangman/const/game/best_score.dart';
 
 void main() {
-  runApp(const MyApp()); // Running the app by calling the MyApp widget
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key}); // Constructor for the MyApp class
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      // Creating a MaterialApp widget
-      debugShowCheckedModeBanner:
-          false, // Disabling the debug banner in debug mode
-      theme: ThemeData.dark(), // Setting the theme to dark mode
-      home: GameScreen(), // Setting the home screen to the GameScreen widget
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData.dark(),
+      home: const HomeScreen(),
+      routes: {
+        'homeScreen': (context) => const HomeScreen(),
+        'gameScreen': (context) => GameScreen(),
+        'categoriesScreen': (context) => CategoriesScreen(),
+        'bestScoreScreen': (context) => BestScoreScreen(),
+      },
     );
   }
 }

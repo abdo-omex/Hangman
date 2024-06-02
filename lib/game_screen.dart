@@ -4,6 +4,7 @@ import 'package:flutter/material.dart'; // Importing the Flutter material packag
 import 'package:hangman/const/consts.dart'; // Importing constants
 import 'package:hangman/const/game/figure_widget.dart'; // Importing figure widget
 import 'package:hangman/const/game/hidden_letters.dart'; // Importing hidden letters widget
+import 'package:shared_preferences/shared_preferences.dart'; // Importing SharedPreferences
 
 // Class representing the game screen widget
 class GameScreen extends StatefulWidget {
@@ -25,7 +26,6 @@ class _GameScreenState extends State<GameScreen> {
 
   // Map to store words categorized by their types
   Map<String, List<String>> wordCategories = {
-    // Categories with corresponding words
     "Animal": [
       "lino",
       "bee",
@@ -178,15 +178,92 @@ class _GameScreenState extends State<GameScreen> {
     selectedChar.clear(); // Clearing the selected characters list
   }
 
+  Future<void> saveScore(int score) async {
+    final prefs = await SharedPreferences.getInstance();
+    List<String> scores = prefs.getStringList('scores') ?? [];
+    scores.add(score.toString());
+    await prefs.setStringList('scores', scores);
+  }
+
+  void gameOver() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.white, // Set AlertDialog background to white
+          title: const Text(
+            'GAME OVER',
+            style: TextStyle(
+              fontSize: 24, // Make title text larger
+              color: Colors.black, // Change title color to black
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'You scored $points points!',
+                style: const TextStyle(
+                  fontSize: 20, // Make score message text larger
+                  color: Colors.black, // Change score message color to black
+                ),
+              ),
+              const SizedBox(
+                  height: 20), // Add space between the text and button
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 12, horizontal: 24), // Make button larger
+                  backgroundColor: Colors.black, // Button background color
+                  foregroundColor: Colors.white, // Button text color
+                ),
+                onPressed: () async {
+                  await saveScore(points);
+                  Navigator.of(context).pop(); // Close the dialog
+                  chooseRandomWord(); // Restart the game
+                  setState(() {
+                    tries = 0; // Reset tries to 0 for the new game
+                    points = 0; // Reset points
+                  });
+                },
+                child: const Text(
+                  'Retry',
+                  style: TextStyle(fontSize: 18), // Make button text larger
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text("Hangman"), // Setting app bar title
+        title: const Text(
+          "Hangman",
+          style: TextStyle(color: Colors.black), // Setting title color to black
+        ),
         elevation: 0.0,
-        backgroundColor: Colors.transparent,
+        backgroundColor: const Color.fromRGBO(186, 255, 255, 255),
+        actions: [
+          IconButton(
+            icon: const Icon(
+              Icons.home,
+              color: Colors.black, // Setting icon color to black
+            ),
+            onPressed: () {
+              Navigator.of(context).pushReplacementNamed('homeScreen');
+            },
+          ),
+        ],
       ),
+      backgroundColor: const Color.fromARGB(
+          186, 255, 255, 255), // Setting the background color to white
       body: Column(
         children: [
           Expanded(
@@ -226,7 +303,7 @@ class _GameScreenState extends State<GameScreen> {
                           .toList(),
                     ),
                   ),
-                )
+                ),
               ],
             ),
           ),
@@ -237,7 +314,7 @@ class _GameScreenState extends State<GameScreen> {
               'Category: $category',
               style: const TextStyle(
                 fontSize: 16,
-                color: Colors.black,
+                color: Colors.black, // Change text color to black
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -249,7 +326,7 @@ class _GameScreenState extends State<GameScreen> {
               'Points: $points',
               style: const TextStyle(
                 fontSize: 16,
-                color: Colors.black,
+                color: Colors.black, // Change text color to black
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -266,7 +343,9 @@ class _GameScreenState extends State<GameScreen> {
                 children: characters.split("").map((e) {
                   return ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black87,
+                      foregroundColor: Colors.black,
+                      backgroundColor:
+                          Colors.white, // Change text color to black
                     ),
                     onPressed: selectedChar.contains(e.toUpperCase())
                         ? null
@@ -289,32 +368,7 @@ class _GameScreenState extends State<GameScreen> {
                                     5; // Deduct 5 points for incorrect guessing
                                 if (tries >= 6) {
                                   // If all tries are used up, show "GAME OVER" and a retry button
-                                  showDialog(
-                                    context: context,
-                                    barrierDismissible: false,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: const Text('GAME OVER'),
-                                        content: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Text('You scored $points points!'),
-                                            ElevatedButton(
-                                              onPressed: () {
-                                                setState(() {
-                                                  chooseRandomWord();
-                                                  tries = 0;
-                                                  points = 0;
-                                                });
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: const Text('Retry'),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                  );
+                                  gameOver();
                                 }
                               }
                             });
@@ -330,7 +384,7 @@ class _GameScreenState extends State<GameScreen> {
                 }).toList(),
               ),
             ),
-          )
+          ),
         ],
       ),
     );

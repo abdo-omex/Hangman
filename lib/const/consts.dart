@@ -1,16 +1,18 @@
+// ignore_for_file: prefer_const_declarations
+
 import 'package:flutter/material.dart';
 
 class AppColors {
-  static final bgColor = const Color(0xff2C3333);
-  static final textColor = const Color(0xffE7F6F2);
+  static final bgColor = Color.fromARGB(255, 0, 0, 0);
+  static final textColor = Color.fromARGB(255, 255, 255, 255);
 }
 
 class GameUI {
-  static const hang = "assets/hang.png";
-  static const head = "assets/head.png";
-  static const body = "assets/body.png";
-  static const rightArm = "assets/r_arm.png";
-  static const leftArm = "assets/l_arm.png";
-  static const rightLeg = "assets/r_leg.png";
-  static const leftLeg = "assets/l_leg.png";
+  static const hang = "Images/hang.png";
+  static const head = "Images/head.png";
+  static const body = "Images/body.png";
+  static const rightArm = "Images/r_arm.png";
+  static const leftArm = "Images/l_arm.png";
+  static const rightLeg = "Images/r_leg.png";
+  static const leftLeg = "Images/l_leg.png";
 }

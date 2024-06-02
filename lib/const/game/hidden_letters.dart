@@ -7,7 +7,9 @@ Widget hiddenLetter(String char, bool visible) {
     width: 50,
     height: 50,
     decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12.0), color: Colors.white),
+        borderRadius: BorderRadius.circular(12.0),
+        // ignore: prefer_const_constructors
+        color: Color.fromARGB(255, 255, 255, 255)),
     child: Visibility(
         visible: !visible,
         child: Text(char,
