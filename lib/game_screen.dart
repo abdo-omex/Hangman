@@ -1,3 +1,5 @@
+// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, use_build_context_synchronously
+
 import 'dart:math'; // Importing the dart:math library for generating random numbers
 
 import 'package:flutter/material.dart'; // Importing the Flutter material package
@@ -178,6 +180,7 @@ class _GameScreenState extends State<GameScreen> {
     selectedChar.clear(); // Clearing the selected characters list
   }
 
+  // Method to save the score in shared preferences
   Future<void> saveScore(int score) async {
     final prefs = await SharedPreferences.getInstance();
     List<String> scores = prefs.getStringList('scores') ?? [];
@@ -185,10 +188,12 @@ class _GameScreenState extends State<GameScreen> {
     await prefs.setStringList('scores', scores);
   }
 
+  // Method to handle game over scenario
   void gameOver() {
     showDialog(
       context: context,
-      barrierDismissible: false,
+      barrierDismissible:
+          false, // Prevent dismissing the dialog by tapping outside
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: Colors.white, // Set AlertDialog background to white
@@ -215,11 +220,13 @@ class _GameScreenState extends State<GameScreen> {
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(
                       vertical: 12, horizontal: 24), // Make button larger
-                  backgroundColor: Colors.black, // Button background color
-                  foregroundColor: Colors.white, // Button text color
+                  backgroundColor:
+                      Color.fromARGB(255, 0, 0, 0), // Button background color
+                  foregroundColor:
+                      Color.fromARGB(255, 255, 255, 255), // Button text color
                 ),
                 onPressed: () async {
-                  await saveScore(points);
+                  await saveScore(points); // Save the score
                   Navigator.of(context).pop(); // Close the dialog
                   chooseRandomWord(); // Restart the game
                   setState(() {
@@ -262,8 +269,8 @@ class _GameScreenState extends State<GameScreen> {
           ),
         ],
       ),
-      backgroundColor: const Color.fromARGB(
-          186, 255, 255, 255), // Setting the background color to white
+      backgroundColor:
+          Color.fromARGB(90, 0, 0, 0), // Setting the background color to white
       body: Column(
         children: [
           Expanded(
@@ -348,7 +355,7 @@ class _GameScreenState extends State<GameScreen> {
                           Colors.white, // Change text color to black
                     ),
                     onPressed: selectedChar.contains(e.toUpperCase())
-                        ? null
+                        ? null // Disable button if character already selected
                         : () {
                             setState(() {
                               selectedChar.add(e.toUpperCase());
